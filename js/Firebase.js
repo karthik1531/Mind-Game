@@ -10,7 +10,7 @@ $('#add').on('click', function(){
   var updates = {};
   updates['/users/']= data;
   firebase.database().ref.update(updates);
-  });
+});
 $('#sub').click(function(){
 	count=count-1;
   alert(count);

@@ -1,9 +1,9 @@
 .grid {
-    float:left;
-    width:100px;
-    height:100px;
-    margin-right:5px;
-    margin-bottom:5px;
-    border-style: solid;
-    background-color:blue;
+  float:left;
+  width:100px;
+  height:100px;
+  margin-right:5px;
+  margin-bottom:5px;
+  border-style: solid;
+  background-color:blue;
 }
