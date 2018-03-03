@@ -1,38 +1,57 @@
-// var databaseRef=firebase.database().ref('users/');
-var userRef = firebase.database().ref('users');
-var count = 0;
-var count;
-userRef.on('value', gotData);
-function gotData(data){
-	var  key = Object.keys('users');
-	console.log(key);
-	console.log(data);
-	//console.log(data.count);
-	//var count=data.count;
+var dbRef = firebase.database().ref();
+var countRef = firebase.database().ref('count');
+
+function mostRecentCountSnapshot(snapshot){
+		
+	var data = snapshot.val();
+	var count = data;
+	$('#current-count').text(''+count);
+	
+};
+
+function listenForChanges(){
+	countRef.on('value', mostRecentCountSnapshot);
 }
 
-$('#add-btn').on('click', function(){
-
-	count=count+1;
-	alert(count);
-	var uid= userRef.push().key;
-	var data = {
-		userId: uid,
-		count: count
+function updateValue(newValue){
+	//var uid= usRef.push().key;
+	var newData = {
+		count:newValue
 	};
+	dbRef.update(newData);
+}
 
-	var updates = {};
-	//console.log(uid);
+function addData(count){
+	count=count+1;
+	updateValue(count);
+};
 
-	updates['/users/' + uid] = data;
+function subData(count){
+	count=count-1;
+	updateValue(count);
+};
 
-	//firebase.database().ref().update(updates);
+$(document).ready(function(){
+	
+	listenForChanges();
 
-	userRef.update(data);
 
+	$('#add-btn').on('click', function(){
+		
+		countRef.once('value').then(function oneTimeData(snapshot){
+			var presentValue = snapshot.val();
+			addData(presentValue);
+		});
+		
+	});
+
+	$('#sub-btn').on('click', function(){
+		
+		countRef.once('value').then(function oneTimeData(snapshot){
+			var presentValue = snapshot.val();
+			subData(presentValue);
+		});
+		
 });
-
-// $('#sub').click(function(){
-// 	count=count-1;
-// 	alert(count);
-// });
+	
+});
