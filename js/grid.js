@@ -1,22 +1,53 @@
 dbRef = firebase.database().ref();
 
-function setUpGrid(Rcount, Ccount) {
+
+var multiArray = new Array(4);
+
+function creatingMultiDimensionalArray(multiArray){
+	for (var i = 0; i < 4; i++) {
+		multiArray[i]=new Array(4);
+	}
+	/*multiArray[2][1]= 'yellow';
+	console.log(multiArray[2][1]);*/
+	
+}
+
+function mostRecentColorsArray(snapshot){
+
+	for(var i =0 ; i<4; i++ ){
+		//console.log(i+'='+snapshot.child('0').child('0').val());
+		for(var j=0; j<4; j++){
+			multiArray[i][j] = snapshot.child(i).child(j).val();
+		}
+	}
+	//console.log(multiArray);
+}
+
+function setUpGrid(Rcount, Ccount, multiArray) {
 
 	var mainGridContainer = $(".main-grid-container");
-	
+	var temp = 0;
+	var temp1 = 0;
+	//console.log(multiArray);
 	for (var i = 0; i < Rcount; i++) { // Row
 
 		var newRow = $("<div class=\"single-row row-"+i+"\"></div>");
 
-		for (var j = 0; j < Ccount; j++) { // col
-			
+		//temp = i;
+
+		for (var j = 0; j < Ccount; j++) {
+		 // col
 			var newCol = $("<div class=\"single-col "+j+"\"></div>");
 			newCol.attr('id',j);
+			console.log(i+'*'+ j +' =' +multiArray[i][j]);
+			//console.log(multiArray[0][0]);
+			newCol.css('background-color', multiArray[i][j]);
 			newRow.append(newCol);
 		}
 		newRow.attr('id',i);
 		mainGridContainer.append(newRow);
 	}
+	
 }
 
 
@@ -43,11 +74,7 @@ function attachColFunctions(e) {
 		}
 	});
 }
-function creatingMultiDimensionalArray(multiArray){
-	for (var i = 0; i < 4; i++) {
-		multiArray[i]=new Array(4);
-	}
-}
+
 function intializingArray(multiArray){
 	for(var i=0; i<4; i++){
 		for(j=0; j<4; j++){
@@ -58,12 +85,21 @@ function intializingArray(multiArray){
 
 $(document).ready(function(){
 	
-	var multiArray = new Array(3);
 	creatingMultiDimensionalArray(multiArray);
-	intializingArray(multiArray);
-	console.log(multiArray);
-	dbRef.set(multiArray);
+
+	dbRef.once('value', function(snapshot) {
+  	if (snapshot.val() === null) {
+    	//alert('exists');
+    	intializingArray(multiArray);
+    	dbRef.set(multiArray);
+  	}
+	});
+
+	dbRef.on('value',mostRecentColorsArray);
 	
+	//console.log(multiArray);
+	
+	//dbRef.on('value',mostRecentColor);
 	$(".btn-submit").on('click', function(){
 		const Rcount=$('#row').val();
 		const Ccount=$('#columnn').val();
@@ -73,7 +109,7 @@ $(document).ready(function(){
 			alert("Please enter a valid input");
 		}
 		else{
-			setUpGrid(Rcount, Ccount);
+			setUpGrid(Rcount, Ccount,multiArray);
 			attachColFunctions();
 			//alert("else");
 		}
