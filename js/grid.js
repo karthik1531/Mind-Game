@@ -3,45 +3,51 @@ dbRef = firebase.database().ref();
 var multiArray = new Array(4);
 
 function creatingMultiDimensionalArray(multiArray){
-	for (var i = 0; i < 4; i++) {
+		for (var i = 0; i < 4; i++) {
 		multiArray[i]=new Array(4);
 	}
-		
-}
-
-function mostRecentColorsArray(snapshot){
-	
-	for(var i =0 ; i<4; i++ ){
-			//console.log(i+'='+snapshot.child('0').child('0').val());
-		for(var j=0; j<4; j++){
-				multiArray[i][j] = snapshot.child(i).child(j).val();
-		}
 	}
+
+let poulatingColorsArray = function(snapshot){ 
+	return new Promise(function(resolve,reject){
+
+		for(var i =0 ; i<4; i++ ){
+			//console.log(i+'='+snapshot.child('0').child('0').val());
+			for(var j=0; j<4; j++){
+				multiArray[i][j] = snapshot.child(i).child(j).val();
+			}
+		}
+		if(multiArray != null){
+			resolve();
+		}
+		else{
+			reject(Error("broke"));
+		}
 		//console.log(multiArray);
+	});
 }
 
-function setUpGrid(Rcount, Ccount, multiArray) {
-
-	var mainGridContainer = $(".main-grid-container");
+let populatingGrid =function(Rcount, Ccount, multiArray){
+	return new Promise(function(resolve,reject) {
+		var mainGridContainer = $(".main-grid-container");
 	
-	for (var i = 0; i < Rcount; i++) { // Row
+		for (var i = 0; i < Rcount; i++) { // Row
 
-		var newRow = $("<div class=\"single-row row-"+i+"\"></div>");
+			var newRow = $("<div class=\"single-row row-"+i+"\"></div>");
 
-			for (var j = 0; j < Ccount; j++) {// col
-				var newCol = $("<div class=\"single-col "+j+"\"></div>");
-				newCol.attr('id',j);
+				for (var j = 0; j < Ccount; j++) {// col
+					var newCol = $("<div class=\"single-col "+j+"\"></div>");
+					newCol.attr('id',j);
 				//console.log(i+'*'+ j +' =' +multiArray[i][j]);
 				//console.log(multiArray[0][0]);
-				newCol.css('background-color', multiArray[i][j]);
-				newRow.append(newCol);
-			}
-		newRow.attr('id',i);
-		mainGridContainer.append(newRow);
-	}
-		
+					newCol.css('background-color', multiArray[i][j]);
+					newRow.append(newCol);
+				}
+			newRow.attr('id',i);
+			mainGridContainer.append(newRow);
+		}
+	});
 }
-
 
 function attachColFunctions(e) {
 
@@ -84,7 +90,7 @@ $(document).ready(function(){
 	  }
 	});
 
-	dbRef.on('value',mostRecentColorsArray);
+
 	$(".btn-submit").on('click', function(){
 		const Rcount=$('#row').val();
 		const Ccount=$('#columnn').val();
@@ -94,7 +100,13 @@ $(document).ready(function(){
 			alert("Please enter a valid input");
 		}
 		else{
-			setUpGrid(Rcount, Ccount,multiArray);
+			var snapshot = dbRef.once('value', function(snapshot) {
+				return snapshot 
+			});
+			poulatingColorsArray(snapshot).then(function(){
+				return populatingGrid(Rcount,Ccount,multiArray);
+			});
+			//setUpGrid(Rcount, Ccount,multiArray);
 			attachColFunctions();
 		}
 	});
