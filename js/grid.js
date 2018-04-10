@@ -8,9 +8,9 @@ function creatingMultiDimensionalArray(multiArray){
 	}
 	}
 
-let poulatingColorsArray = function(snapshot){ 
+let populatingColorsArray = function(snapshot){ 
 	return new Promise(function(resolve,reject){
-
+		
 		for(var i =0 ; i<4; i++ ){
 			//console.log(i+'='+snapshot.child('0').child('0').val());
 			for(var j=0; j<4; j++){
@@ -36,7 +36,7 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 			var newRow = $("<div class=\"single-row row-"+i+"\"></div>");
 
 				for (var j = 0; j < Ccount; j++) {// col
-					var newCol = $("<div class=\"single-col "+j+"\"></div>");
+					var newCol = $("<div class=\"single-col col-"+j+"\"></div>");
 					newCol.attr('id',j);
 				//console.log(i+'*'+ j +' =' +multiArray[i][j]);
 				//console.log(multiArray[0][0]);
@@ -46,31 +46,34 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 			newRow.attr('id',i);
 			mainGridContainer.append(newRow);
 		}
+		resolve();
 	});
 }
 
-function attachColFunctions(e) {
+let attachingCol = function(e){
+	return new Promise(function(resolve,reject){
 
 	var colors = ['blue','black','red','green','yellow','orange','pink','grey','voilet','white','purple'];
-	$('.single-col').on('click', function(e){
-		var colId = $(e.target).attr('id');
-		var rowId = $(this).parent().attr('id');
+	
+		$('.single-col').on('click', function(e){
+			console.log();
+			var colId = $(e.target).attr('id');
+			var rowId = $(this).parent().attr('id');
 
-		if(($(this).css("background-color")) == "rgb(255, 255, 0)"){      //checking the background color of targetd grid is yellow or not
-			var updateColor = colors[(colId%10)];
-			$(e.target).css('background-color', updateColor);
-			//console.log(row);
-			dbRef.child(rowId).child(colId).set(updateColor);
-		}
-		else{
-			var updateColor = 'yellow';
-			$(e.target).css('background-color', updateColor);
-			click = click+1;
-			dbRef.child(rowId).child(colId).set(updateColor);
-		}
+			if(($(this).css("background-color")) == "rgb(255, 255, 0)"){      //checking the background color of targetd grid is yellow or not
+				var updateColor = colors[(colId%10)];
+				$(e.target).css('background-color', updateColor);
+				//console.log(row);
+				dbRef.child(rowId).child(colId).set(updateColor);
+			}
+			else{
+				var updateColor = 'yellow';
+				$(e.target).css('background-color', updateColor);
+				dbRef.child(rowId).child(colId).set(updateColor);
+			}
+		});
 	});
 }
-
 function intializingArray(multiArray){
 	for(var i=0; i<4; i++){
 		for(j=0; j<4; j++){
@@ -100,18 +103,20 @@ $(document).ready(function(){
 			alert("Please enter a valid input");
 		}
 		else{
-			var snapshot = dbRef.once('value', function(snapshot) {
-				return snapshot 
+			dbRef.once('value', function(snapshot) {
+				populatingColorsArray(snapshot).then(function(){
+				 populatingGrid(Rcount,Ccount,multiArray).then(function(){
+				 	attachingCol();
 			});
-			poulatingColorsArray(snapshot).then(function(){
-				return populatingGrid(Rcount,Ccount,multiArray);
 			});
-			//setUpGrid(Rcount, Ccount,multiArray);
-			attachColFunctions();
-		}
-	});
 
+						//setUpGrid(Rcount, Ccount,multiArray);
+			
+		
+			});
+		}
 	$(".btn-cancel").on('click', function(){
 		location.reload(true);
+		});
 	});
 });
