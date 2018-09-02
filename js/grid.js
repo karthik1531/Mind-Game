@@ -52,19 +52,32 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 
 let attachingCol = function(e){
 	return new Promise(function(resolve,reject){
-
+	var matchColor = new Array(3);
 	var colors = ['blue','black','red','green','yellow','orange','pink','grey','voilet','white','purple'];
-	
+	var click = 0;
+	var matchScore = 0;
 		$('.single-col').on('click', function(e){
 			console.log();
 			var colId = $(e.target).attr('id');
 			var rowId = $(this).parent().attr('id');
 
 			if(($(this).css("background-color")) == "rgb(255, 255, 0)"){      //checking the background color of targetd grid is yellow or not
+				console.log(click);
 				var updateColor = colors[(colId%10)];
+				console.log(updateColor);
+				matchColor[click]= updateColor;
+				console.log(matchColor);
 				$(e.target).css('background-color', updateColor);
 				//console.log(row);
+				if(matchColor[click-1]== matchColor[click]){
+					alert('matched');
+					matchScore+=1;
+					if(matchScore==8){
+						alert('YAAAYY Winner');
+					}
+				}
 				dbRef.child(rowId).child(colId).set(updateColor);
+				click +=1
 			}
 			else{
 				var updateColor = 'yellow';
@@ -74,6 +87,11 @@ let attachingCol = function(e){
 		});
 	});
 }
+
+let MatchingColors = function(e){
+
+}
+
 function intializingArray(multiArray){
 	for(var i=0; i<4; i++){
 		for(j=0; j<4; j++){
