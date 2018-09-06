@@ -114,8 +114,8 @@ $(document).ready(function(){
 
 
 	$(".btn-submit").on('click', function(){
-		const Rcount=$('#row').val();
-		const Ccount=$('#columnn').val();
+		const Rcount=4;
+		const Ccount=4;
 		var gridSize = (Rcount * 50)-10;              						//calculting grid size based on input value
 		$('.main-grid-container').css('width', gridSize);
 		if((Rcount <= 0 && (Ccount <= 0)) && ($.isNumeric(Rcount)) && ($.isNumeric(Ccount))){      //To Manage Zero value input
