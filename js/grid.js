@@ -54,37 +54,48 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 let attachingCol = function(e){
 	return new Promise(function(resolve,reject){
 	var matchColor = new Array(3);
+	var prevRowID;
+	var prevColID;
+	$('.single-col').hover(function(){
+		$(this).css({ width: '50px', height: '50px' });
+	} , function(){
+		$(this).css({ width: '40px', height: '40px' });
+	});
+
 	var colors = ['blue','black','red','green','yellow','orange','pink','grey','voilet','white','purple'];
 		$('.single-col').on('click', function(e){
 			console.log();
 			var colId = $(e.target).attr('id');
 			var rowId = $(this).parent().attr('id');
+			$(this).addClass('borderClass');
 
-			if(($(this).css("background-color")) == "rgb(255, 255, 0)"){      //checking the background color of targetd grid is yellow or not
+			if(($(this).css("background-color")) == "rgb(255, 255, 0)"){    //checking the background color of targetd grid is yellow or not
 				var updateColor = colors[(colId%10)];
 				console.log(updateColor);
 				matchColor[clickCount]= updateColor;
 				console.log(matchColor);
 				$(e.target).css('background-color', updateColor);
-				//console.log(row);
+				dbRef.child(rowId).child(colId).set(updateColor);
+				console.log($(this).css('background-color'));
 				if(matchColor[clickCount-1]== matchColor[clickCount]){
 					alert('matched');
 					matchScore+=1;
-					if(matchScore==8){
-						alert('YAAAYY Winner');
-					}
 				}
+				
+			}
+				else{
+					//$(this).removeClass('borderClass');
+					var updateColor = 'yellow';
+					$(e.target).css('background-color', updateColor);
+				}
+				
 				clickCount+=1;
 				dbRef.child("matchScore").set(matchScore);
 				dbRef.child("clickCount").set(clickCount);
 				dbRef.child(rowId).child(colId).set(updateColor);
 			
-			}
-			else{
-				var updateColor = 'yellow';
-				$(e.target).css('background-color', updateColor);
-				dbRef.child(rowId).child(colId).set(updateColor);
-			}
+			
+			
 		});
 	});
 }
