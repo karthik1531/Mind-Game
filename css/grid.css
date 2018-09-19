@@ -1,6 +1,8 @@
 .main-grid-container{
 	/*width: 240px;*/
 	text-align: center;
+	margin-right: auto;
+	margin-left: auto;
 }
 
 .single-row {
@@ -10,6 +12,7 @@
 	position: relative;
 	text-align: center;
 	margin-top: 5px;
+	align-items: center;
 	overflow: hidden;
 }
 
@@ -21,6 +24,7 @@
 	text-align: center;
 	display: inline-block;
 	margin-top: 5px;
+	align-items: center;
 	margin-left: 5px;
 	overflow: hidden;
 }

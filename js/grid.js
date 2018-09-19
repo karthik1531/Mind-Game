@@ -51,14 +51,20 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 	});
 }
 
+function matched(rowId,colId){
+	$("#colId").off('click')
+};
+
 let attachingCol = function(e){
 	return new Promise(function(resolve,reject){
 	var matchColor = new Array(3);
 	var prevRowID;
 	var prevColID;
 	$('.single-col').hover(function(){
+		$('.main-grid-container').css('width', 200);
 		$(this).css({ width: '50px', height: '50px' });
 	} , function(){
+		$('.main-grid-container').css('width', 190);
 		$(this).css({ width: '40px', height: '40px' });
 	});
 
@@ -78,6 +84,7 @@ let attachingCol = function(e){
 				dbRef.child(rowId).child(colId).set(updateColor);
 				console.log($(this).css('background-color'));
 				if(matchColor[clickCount-1]== matchColor[clickCount]){
+					matched(rowId,colId);
 					alert('matched');
 					matchScore+=1;
 				}
