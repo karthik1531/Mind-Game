@@ -3,6 +3,7 @@ dbRef = firebase.database().ref();
 var multiArray = new Array(4);
 var clickCount;
 var matchScore;
+var colors = new Array(10);
 function creatingMultiDimensionalArray(multiArray){
 		for (var i = 0; i < 4; i++) {
 		multiArray[i]=new Array(4);
@@ -68,7 +69,7 @@ let attachingCol = function(e){
 		$(this).css({ width: '40px', height: '40px' });
 	});
 
-	var colors = ['blue','black','red','green','yellow','orange','pink','grey','voilet','white','purple'];
+	//var colors = ['blue','black','red','green','yellow','orange','pink','grey','voilet','white','purple'];
 		$('.single-col').on('click', function(e){
 			console.log();
 			var colId = $(e.target).attr('id');
@@ -79,7 +80,7 @@ let attachingCol = function(e){
 				var updateColor = colors[(colId%10)];
 				console.log(updateColor);
 				matchColor[clickCount]= updateColor;
-				console.log(matchColor);
+				//console.log(matchColor);
 				$(e.target).css('background-color', updateColor);
 				dbRef.child(rowId).child(colId).set(updateColor);
 				console.log($(this).css('background-color'));
@@ -148,7 +149,14 @@ $(document).ready(function(){
 			});
 				clickCount = snapshot.child("clickCount").val();
 				matchScore = snapshot.child("matchScore").val();
-				console.log(matchScore);
+				console.log(snapshot.child("colors").child(2).val());
+				var i=0;
+				while(i<10){
+					console.log("hi");
+					colors[i]=snapshot.child("colors").child(i).val();
+					i++;
+				}
+				console.log(colors);
 			});
 
 		}
