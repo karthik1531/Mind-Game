@@ -4,10 +4,15 @@ var multiArray = new Array(4);
 var clickCount;
 var matchScore;
 var colors = new Array(10);
+var matchColor =new Array(2);
+var matchIndex=0;
+var thisObjArray= new Array(2);
+var objIndex=0;
 function creatingMultiDimensionalArray(multiArray){
 		for (var i = 0; i < 4; i++) {
-		multiArray[i]=new Array(4);
+			multiArray[i]=new Array(4);
 	}
+		
 	}
 
 let populatingColorsArray = function(snapshot){ 
@@ -44,6 +49,7 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 				//console.log(multiArray[0][0]);
 					newCol.css('background-color', multiArray[i][j]);
 					newRow.append(newCol);
+					//console.log('hi');
 				}
 			newRow.attr('id',i);
 			mainGridContainer.append(newRow);
@@ -56,61 +62,80 @@ function matched(rowId,colId){
 	$("#colId").off('click')
 };
 
+function matchingColors(matchColor,thisObjArray){
+	if (matchColor[0]==matchColor[1]) {
+		alert('matched');
+		for (var i = 0; i < 2; i++) {
+			$(thisObjArray[i]).css('pointer-events', 'none');
+		}
+	}
+	else{
+		for (var i = 0; i < 2; i++) {
+			console.log("false");
+			$(thisObjArray[i]).css('background-color',"yellow");
+			var  colId=$(thisObjArray[i]).attr('id');
+			var rowId=$(thisObjArray[i]).parent().attr('id');
+			console.log('rowID-');
+			console.log(rowId);
+			console.log('colid-');
+			console.log(colId);
+			dbRef.child(rowId).child(colId).set('yellow');
+		}
+	}
+}
+
+function revealingColors(rowId,colId,thisObj){
+		var updateColor;
+		console.log(colId);
+		console.log(rowId);
+		dbRef.once('value', function(snapshot) {
+			//console.log('hello');
+				updateColor=snapshot.child("colors").child(colId%10).val();
+				console.log(updateColor);
+				$(thisObj).css('background-color',updateColor);
+				thisObjArray[objIndex]=thisObj;
+				//console.log(matchIndex);
+				matchColor[matchIndex]=updateColor
+				console.log(thisObjArray);
+				dbRef.child(rowId).child(colId).set(updateColor);
+				setTimeout(function(){
+					if(matchIndex==1){
+						matchingColors(matchColor,thisObjArray);
+						matchIndex=0;
+						console.log('match');
+						objIndex=0;
+					}
+					matchIndex++;
+					objIndex++;
+				},3000);
+	});
+		
+}
+
 let attachingCol = function(e){
 	return new Promise(function(resolve,reject){
-	var matchColor = new Array(3);
+	//var matchColor = new Array(3);
 	var prevRowID;
 	var prevColID;
-	$('.single-col').hover(function(){
-		$('.main-grid-container').css('width', 200);
+	$('.single-col').hover(function(){ 					//Mouse hover will increaase the block size and decreases if moved away
+		$('.main-grid-container').css('width', 200); 
 		$(this).css({ width: '50px', height: '50px' });
 	} , function(){
-		$('.main-grid-container').css('width', 190);
-		$(this).css({ width: '40px', height: '40px' });
-	});
+			$('.main-grid-container').css('width', 190);
+			$(this).css({ width: '40px', height: '40px' });
+		});
 
-	//var colors = ['blue','black','red','green','yellow','orange','pink','grey','voilet','white','purple'];
-		$('.single-col').on('click', function(e){
+	$('.single-col').on('click', function(e){
 			console.log();
 			var colId = $(e.target).attr('id');
 			var rowId = $(this).parent().attr('id');
 			$(this).addClass('borderClass');
-
-			if(($(this).css("background-color")) == "rgb(255, 255, 0)"){    //checking the background color of targetd grid is yellow or not
-				var updateColor = colors[(colId%10)];
-				console.log(updateColor);
-				matchColor[clickCount]= updateColor;
-				//console.log(matchColor);
-				$(e.target).css('background-color', updateColor);
-				dbRef.child(rowId).child(colId).set(updateColor);
-				console.log($(this).css('background-color'));
-				if(matchColor[clickCount-1]== matchColor[clickCount]){
-					matched(rowId,colId);
-					alert('matched');
-					matchScore+=1;
-				}
-				
-			}
-				else{
-					//$(this).removeClass('borderClass');
-					var updateColor = 'yellow';
-					$(e.target).css('background-color', updateColor);
-				}
-				
-				clickCount+=1;
-				dbRef.child("matchScore").set(matchScore);
-				dbRef.child("clickCount").set(clickCount);
-				dbRef.child(rowId).child(colId).set(updateColor);
-			
-			
-			
-		});
+			thisObj=$(this);
+			revealingColors(rowId,colId,thisObj);
+	});
 	});
 }
 
-let MatchingColors = function(e){
-
-}
 
 function intializingArray(multiArray){
 	for(var i=0; i<4; i++){
@@ -149,14 +174,14 @@ $(document).ready(function(){
 			});
 				clickCount = snapshot.child("clickCount").val();
 				matchScore = snapshot.child("matchScore").val();
-				console.log(snapshot.child("colors").child(2).val());
+				//console.log(snapshot.child("colors").child(2).val());
 				var i=0;
 				while(i<10){
-					console.log("hi");
-					colors[i]=snapshot.child("colors").child(i).val();
+					//console.log("hi");
+					colors[i]=snapshot.child("colors").child(i).val();  //Fetching colors from firebase
 					i++;
 				}
-				console.log(colors);
+				//console.log(colors);
 			});
 
 		}
