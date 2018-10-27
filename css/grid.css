@@ -1,11 +1,11 @@
-.main-grid-container{
+table {
 	/*width: 240px;*/
 	text-align: center;
 	margin-right: auto;
 	margin-left: auto;
 }
 
-.single-row {
+tr {
 	background-color: green;
 	width: auto;
 	height: auto;
@@ -16,7 +16,7 @@
 	overflow: hidden;
 }
 
-.single-col {
+td {
 	/*background-color: yellow;*/
 	width: 40px;
 	height: 40px;
