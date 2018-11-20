@@ -1,1 +1,0 @@
-<?php header('/media/karthik/B0BAF499BAF45CF2/projects/mindgame: /grid.html') ;  ?>
