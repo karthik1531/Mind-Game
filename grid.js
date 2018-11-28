@@ -12,6 +12,8 @@ var openedCards=[];
 var updateColor;
 var t1;
 var t2;
+
+
 function creatingMultiDimensionalArray(multiArray){
 		for (var i = 0; i < 4; i++) {
 			multiArray[i]=new Array(4);
@@ -126,6 +128,7 @@ let gettingColors= function(colId){
 
 
 
+
 function checkForMatching(openedCards){
 	var color=$(openedCards[0]).css("background-color");
 	//console.log(openedCards[1].style.backgroundColor);
@@ -141,16 +144,29 @@ function checkForMatching(openedCards){
 	}
 }
 
+/*function backgroundUpdate(updateColor,thisObj){
+	console.log("in background-color");
+	dbRef.on(value,function(snapshot){
+		console.log("in running color");
+		$(thisObj).css('background-color',updateColor);
+		console.log("after");
+	});
+}
+*/
 function attachingColor(updateColor,thisObj,rowId,colId){
 	console.log("inattachcolor",updateColor);
 	$(thisObj).css('background-color',updateColor);
 	dbRef.child(rowId).child(colId).set(updateColor);
+	var  classref=$(thisObj).attr('id');
+	//backgroundUpdate(updateColor,thisObj);
 	openedCards.push(thisObj);
 	setTimeout(function() {
 		checkForMatching(openedCards);
 	}, 50);
 	
 }
+
+
 
 let attachingCol = function(e){
 	return new Promise(function(resolve,reject){
@@ -210,7 +226,7 @@ $(document).ready(function(){
 			alert("Please enter a valid input");
 		}
 		else{
-			dbRef.once('value', function(snapshot) {
+			dbRef.on('value', function(snapshot) {
 				populatingColorsArray(snapshot).then(function(){
 				 populatingGrid(Rcount,Ccount,multiArray).then(function(){
 				 	attachingCol();
@@ -229,6 +245,13 @@ $(document).ready(function(){
 			});
 
 		}
+		/*dbRef.on('value', function(snapshot){
+			console.log("IN new func");
+			populatingColorsArray(snapshot);
+			console.log(multiArray);
+			populatingGrid(4,4,multiArray);
+
+		});*/
 	$(".btn-cancel").on('click', function(){
 		location.reload(true);
 		});
