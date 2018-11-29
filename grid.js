@@ -71,6 +71,21 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 	});
 }
 
+function rePopulatingGrid(multiArray){
+	var table=document.getElementById('myTable');
+	console.log("inrepopulate");
+	for (var i = 0, row; row = table.rows[i]; i++) {
+		console.log("in row");
+		for(var j = 0, col; col = row.cells[j]; j++){
+			console.log(multiArray);
+			//var temp=table[i].cells;
+			//console.log(temp);
+			col.style.backgroundColor=multiArray[i][j];
+		}
+		
+	}
+}
+
 function revertColors(openedCards){
 	
 setTimeout(function() {
@@ -226,7 +241,7 @@ $(document).ready(function(){
 			alert("Please enter a valid input");
 		}
 		else{
-			dbRef.on('value', function(snapshot) {
+			dbRef.once('value', function(snapshot) {
 				populatingColorsArray(snapshot).then(function(){
 				 populatingGrid(Rcount,Ccount,multiArray).then(function(){
 				 	attachingCol();
@@ -242,18 +257,22 @@ $(document).ready(function(){
 					i++;
 				}
 				//console.log(colors);
-			});
+				dbRef.on('value', function(snapshot){
+					console.log("IN new func");
+
+					populatingColorsArray(snapshot).then(function(){
+						rePopulatingGrid(multiArray);
+					});
+					//console.log(multiArray);
+
+				});
+		});
 
 		}
-		/*dbRef.on('value', function(snapshot){
-			console.log("IN new func");
-			populatingColorsArray(snapshot);
-			console.log(multiArray);
-			populatingGrid(4,4,multiArray);
-
-		});*/
+		
+	});
 	$(".btn-cancel").on('click', function(){
 		location.reload(true);
 		});
-	});
+	
 });
