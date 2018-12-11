@@ -73,11 +73,11 @@ let populatingGrid =function(Rcount, Ccount, multiArray){
 
 function rePopulatingGrid(multiArray){
 	var table=document.getElementById('myTable');
-	console.log("inrepopulate");
+	//console.log("inrepopulate");
 	for (var i = 0, row; row = table.rows[i]; i++) {
-		console.log("in row");
+		//console.log("in row");
 		for(var j = 0, col; col = row.cells[j]; j++){
-			console.log(multiArray);
+			//console.log(multiArray);
 			//var temp=table[i].cells;
 			//console.log(temp);
 			col.style.backgroundColor=multiArray[i][j];
@@ -90,9 +90,14 @@ function revertColors(openedCards){
 	
 setTimeout(function() {
 
-	for (var i = 0; i < 2; i++) {
+	for (let i = 0; i < 2; i++) {
+			var  colId=$(openedCards[i]).attr('id');
+			var rowId=$(openedCards[i]).parent().attr('id');
 			//console.log("false");
 			$(openedCards[i]).css('background-color',"yellow");
+			$(openedCards[i]).css('pointer-events', 'auto');
+			$(openedCards[i]).removeClass('borderClass');
+			dbRef.child(rowId).child(colId).set('yellow');
 	}
 	openedCards.length=0;
 }, 2000);	
@@ -109,18 +114,21 @@ function matched(openedCards){
 }
 function unmatched(openedCards){
 		revertColors(openedCards);
-		for (var i = 0; i < 2; i++) {
-			//console.log("false");
-			//$(openedCards[i]).css('background-color',"yellow");
-			var  colId=$(openedCards[i]).attr('id');
-			var rowId=$(openedCards[i]).parent().attr('id');
-			console.log('rowID-');
-			console.log(rowId);
-			console.log('colid-');
-			console.log(colId);
-			$(openedCards[i]).removeClass('borderClass');
-			dbRef.child(rowId).child(colId).set('yellow');
-		}
+		/*setTimeout(function(){
+			for (var i = 0; i < 2; i++) {
+				//console.log("false");
+				//$(openedCards[i]).css('background-color',"yellow");
+				var  colId=$(openedCards[i]).attr('id');
+				var rowId=$(openedCards[i]).parent().attr('id');
+				console.log('rowID-');
+				console.log(rowId);
+				console.log('colid-');
+				console.log(colId);
+				$(openedCards[i]).removeClass('borderClass');
+				dbRef.child(rowId).child(colId).set('yellow');
+				openedCards.length=0;
+			} 
+		},3000);*/
 	
 }
 
@@ -159,15 +167,7 @@ function checkForMatching(openedCards){
 	}
 }
 
-/*function backgroundUpdate(updateColor,thisObj){
-	console.log("in background-color");
-	dbRef.on(value,function(snapshot){
-		console.log("in running color");
-		$(thisObj).css('background-color',updateColor);
-		console.log("after");
-	});
-}
-*/
+
 function attachingColor(updateColor,thisObj,rowId,colId){
 	console.log("inattachcolor",updateColor);
 	$(thisObj).css('background-color',updateColor);
@@ -201,6 +201,7 @@ let attachingCol = function(e){
 			var colId = $(e.target).attr('id');
 			var rowId = $(this).parent().attr('id');
 			$(this).addClass('borderClass');
+			$(this).css('pointer-events', 'none');
 			thisObj=$(this);
 			t1=performance.now();
 			gettingColors(colId).then(function(){
